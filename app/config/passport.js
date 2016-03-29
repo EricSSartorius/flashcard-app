@@ -21,7 +21,7 @@ module.exports = function(passport){
         clientID: configAuth.facebookAuth.clientID,
         clientSecret: configAuth.facebookAuth.clientSecret,
         callbackURL: configAuth.facebookAuth.callbackUrl,
-        passRequestToCallback: true,
+        passReqToCallback: true,
         profileFields: ['id', 'emails', 'name']
     },
     function(req, token, refreshToken, profile, done){
@@ -66,7 +66,7 @@ module.exports = function(passport){
         consumerKey: configAuth.twitterAuth.consumerKey,
         consumerSecret: configAuth.twitterAuth.consumerSecret,
         callbackURL: configAuth.twitterAuth.callbackUrl,
-        passRequestToCallback: true
+        passReqToCallback: true
     },
     function(req, token, refreshToken, profile, done){
         if(!req.user){
@@ -94,7 +94,7 @@ module.exports = function(passport){
             user.twitter.id = profile.id;
             user.twitter.token = token;
             user.twitter.displayName = profile.displayName;
-            user.facebook.username = profile.username;
+            user.twitter.username = profile.username;
             
             user.save(function(err){
                 if(err) throw err;
@@ -108,7 +108,7 @@ module.exports = function(passport){
         clientID: configAuth.googleAuth.clientID,
         clientSecret: configAuth.googleAuth.clientSecret,
         callbackURL: configAuth.googleAuth.callbackUrl,
-        passRequestToCallback: true
+        passReqToCallback: true
     },
     function(req, token, refreshToken, profile, done){
         process.nextTick(function(){
