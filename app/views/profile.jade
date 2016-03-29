@@ -1,0 +1,29 @@
+html
+    head
+        title Profile
+    body
+        h1 Profile Info
+        if user.local.username
+            .profileInfo
+                h3 Local
+                p= user.local.username
+        if user.facebook.name
+            .profileInfo
+                h3 Facebook
+                p= user.facebook.id
+                p= user.facebook.email
+                p= user.facebook.name
+        if user.twitter.username
+            .profileInfo
+                h3 Twitter
+                p= user.twitter.id
+                p= user.twitter.username
+                p= user.twitter.displayName
+        if user.google.email
+            .profileInfo
+                h3 Google
+                p= user.google.id
+                p= user.google.email
+                p= user.google.displayName
+        .navigation
+            a(href="/") Home
