@@ -15,5 +15,21 @@
     <form action="/auth/facebook" method="get">
         <button type="submit">Facebook</button>
     </form>
+    <h3>Sign In</h3> 
+    <form action="/auth/local" method="post">
+        <label for="email">Email</label>
+        <input type="text" name="email" />
+        <label for="pass">Password</label>
+        <input type="password" name="password" />
+        <button type="submit">Submit</button>
+    </form>
+    <h3>New Account</h3>
+    <form action="/auth/create" method="post">
+        <label for="email">Email</label>
+        <input type="text" name="email" />
+        <label for="pass">Password</label>
+        <input type="password" name="password" />
+        <button type="submit">Submit</button>
+    </form>
 </body>
 </html>

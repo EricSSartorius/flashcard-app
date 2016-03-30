@@ -13,17 +13,23 @@ module.exports = function(app, passport){
             res.render('profile',{user:req.user});
         });
    
-    //AUTHENTICATION
+    app.route("/error")
+        .get(function(req, res) {
+            res.sendFile(path+"/client/error.html");
+        });
    
-    //LOCAL LOGIN
+    //AUTHENTICATION
     app.route("/auth/local")
+        .post(passport.authenticate('local-login',{
+            successRedirect: "/profile",
+            failureRedirect: "/error"
+        }));
+    app.route("/auth/create")
         .post(passport.authenticate('local-signup',{
             successRedirect: "/profile",
-            failureRedirect: "/",
-            failureFlash: true
+            failureRedirect: "/error"
         }));
-    //LOCAL SIGNUP
-   
+    
     app.route("/auth/facebook")
         .get(passport.authenticate('facebook',{scope: 'email'}));
     app.route("/auth/facebook/callback")

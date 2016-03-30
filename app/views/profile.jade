@@ -3,10 +3,10 @@ html
         title Profile
     body
         h1 Profile Info
-        if user.local.username
+        if user.local.email
             .profileInfo
                 h3 Local
-                p= user.local.username
+                p= user.local.email
         if user.facebook.name
             .profileInfo
                 h3 Facebook
