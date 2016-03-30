@@ -64,6 +64,54 @@ module.exports = function(app, passport){
     app.route("/connect/google")
         .get(passport.authorize('google',{scope:['profile','email']}));
         
+    app.route("/logout")
+        .get(function(req, res) {
+            req.logout();
+            res.redirect("/");
+        });
+        
+    //UNLINK
+    app.route("/unlink/local")
+        .get(function(req, res) {
+            var user = req.user;
+            user.local.email = undefined;
+            user.local.password = undefined;
+            user.save(function(err){
+                if(err) throw err;
+                res.redirect("/profile");
+            });
+        });
+        
+    app.route("/unlink/facebook")
+        .get(function(req, res) {
+            var user = req.user;
+            user.facebook.token = undefined;
+            user.save(function(err){
+                if(err) throw err;
+                res.redirect("/profile");
+            });
+        });
+        
+    app.route("/unlink/twitter")
+        .get(function(req, res) {
+            var user = req.user;
+            user.twitter.token = undefined;
+            user.save(function(err){
+                if(err) throw err;
+                res.redirect("/profile");
+            });
+        });
+        
+    app.route("/unlink/google")
+        .get(function(req, res) {
+            var user = req.user;
+            user.google.token = undefined;
+            user.save(function(err){
+                if(err) throw err;
+                res.redirect("/profile");
+            });
+        });
+        
     function isLoggedIn(req,res,next){
         if(req.isAuthenticated()){
             return next();

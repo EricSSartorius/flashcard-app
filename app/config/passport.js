@@ -80,7 +80,17 @@ module.exports = function(passport){
                     if(err)
                         return done(err);
                     if(user){
-                        return done(null,user);
+                        if(!user.facebook.token){
+                            user.facebook.token = token;
+                            user.facebook.name = profile.name.givenName+' '+profile.name.familyName;
+                            user.facebook.email = profile.emails[0].value;
+                            user.save(function(err){
+                                if(err) throw err;
+                                return done(null,user);
+                            });
+                        }else{
+                            return done(null,user);
+                        }
                     }else{
                         var newUser = new User();
                         newUser.facebook.id = profile.id;
@@ -124,7 +134,17 @@ module.exports = function(passport){
                     if(err)
                         return done(err);
                     if(user){
-                        return done(null,user);
+                        if(!user.twitter.token){
+                            user.twitter.token = token;
+                            user.twitter.displayName = profile.displayName;
+                            user.twitter.username = profile.username;
+                            user.save(function(err){
+                                if(err) throw err;
+                                return done(null,user);
+                            });
+                        }else{
+                            return done(null,user);
+                        }
                     }else{
                         var newUser = new User();
                         newUser.twitter.id = profile.id;
@@ -169,7 +189,17 @@ module.exports = function(passport){
                         return done(err);
                     }
                     if(user){
-                        return done(null,user);
+                        if(!user.google.token){
+                            user.google.token = token;
+                            user.google.displayName = profile.displayName;
+                            user.google.email = profile.emails[0].value;
+                            user.save(function(err){
+                                if(err) throw err;
+                                return done(null,user);
+                            });
+                        }else{
+                            return done(null,user);
+                        }
                     }else{
                         var newUser = new User();
                         newUser.google.id = profile.id;
