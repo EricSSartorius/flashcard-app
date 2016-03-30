@@ -13,17 +13,23 @@ module.exports = function(app, passport){
             res.render('profile',{user:req.user});
         });
    
-    //AUTHENTICATION
+    app.route("/error")
+        .get(function(req, res) {
+            res.sendFile(path+"/client/error.html");
+        });
    
-    //LOCAL LOGIN
+    //AUTHENTICATION
     app.route("/auth/local")
+        .post(passport.authenticate('local-login',{
+            successRedirect: "/profile",
+            failureRedirect: "/error"
+        }));
+    app.route("/auth/create")
         .post(passport.authenticate('local-signup',{
             successRedirect: "/profile",
-            failureRedirect: "/",
-            failureFlash: true
+            failureRedirect: "/error"
         }));
-    //LOCAL SIGNUP
-   
+    
     app.route("/auth/facebook")
         .get(passport.authenticate('facebook',{scope: 'email'}));
     app.route("/auth/facebook/callback")
@@ -57,6 +63,54 @@ module.exports = function(app, passport){
         
     app.route("/connect/google")
         .get(passport.authorize('google',{scope:['profile','email']}));
+        
+    app.route("/logout")
+        .get(function(req, res) {
+            req.logout();
+            res.redirect("/");
+        });
+        
+    //UNLINK
+    app.route("/unlink/local")
+        .get(function(req, res) {
+            var user = req.user;
+            user.local.email = undefined;
+            user.local.password = undefined;
+            user.save(function(err){
+                if(err) throw err;
+                res.redirect("/profile");
+            });
+        });
+        
+    app.route("/unlink/facebook")
+        .get(function(req, res) {
+            var user = req.user;
+            user.facebook.token = undefined;
+            user.save(function(err){
+                if(err) throw err;
+                res.redirect("/profile");
+            });
+        });
+        
+    app.route("/unlink/twitter")
+        .get(function(req, res) {
+            var user = req.user;
+            user.twitter.token = undefined;
+            user.save(function(err){
+                if(err) throw err;
+                res.redirect("/profile");
+            });
+        });
+        
+    app.route("/unlink/google")
+        .get(function(req, res) {
+            var user = req.user;
+            user.google.token = undefined;
+            user.save(function(err){
+                if(err) throw err;
+                res.redirect("/profile");
+            });
+        });
         
     function isLoggedIn(req,res,next){
         if(req.isAuthenticated()){

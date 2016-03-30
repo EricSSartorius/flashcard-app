@@ -3,27 +3,31 @@ html
         title Profile
     body
         h1 Profile Info
-        if user.local.username
+        if user.local.email
             .profileInfo
                 h3 Local
-                p= user.local.username
-        if user.facebook.name
+                p= user.local.email
+                a(href="/unlink/local") Disconnect
+        if user.facebook.token
             .profileInfo
                 h3 Facebook
                 p= user.facebook.id
                 p= user.facebook.email
                 p= user.facebook.name
-        if user.twitter.username
+                a(href="/unlink/facebook") Disconnect
+        if user.twitter.token
             .profileInfo
                 h3 Twitter
                 p= user.twitter.id
                 p= user.twitter.username
                 p= user.twitter.displayName
-        if user.google.email
+                a(href="/unlink/twitter") Disconnect
+        if user.google.token
             .profileInfo
                 h3 Google
                 p= user.google.id
                 p= user.google.email
                 p= user.google.displayName
+                a(href="/unlink/google") Disconnect
         .navigation
             a(href="/") Home

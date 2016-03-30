@@ -17,6 +17,55 @@ module.exports = function(passport){
         });
     });
     
+    passport.use('local-signup',new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'password',
+        passReqToCallback: true
+    },
+    function(req, email, password, done){
+        process.nextTick(function(){
+            User.findOne({'local.email': email}, function(err, user) {
+                if(err) return done(err);
+                
+                //handle error for username already created
+                //-----return done(null,false,req.flash('signupMessage','That email address is already taken.')
+                if(user){
+                    return done(null,false);
+                }else{
+                    var newUser = new User();
+                    
+                    newUser.local.email = email;
+                    newUser.local.password = newUser.generateHash(password);
+                    
+                    newUser.save(function(err){
+                        if(err) throw err;
+                        return done(null,newUser);
+                    });
+                }
+            });
+        });
+    }));
+    
+    passport.use('local-login', new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'password',
+        passReqToCallback: true
+    },
+    function(req, email, password, done){
+        User.findOne({'local.email':email},function(err, user) {
+            if(err) return done(err);
+            if(!user){
+                //handle error for bad login
+                return done(null,false);
+            }
+            if(!user.validPassword(password)){
+                //handle error for bad password
+                return done(null,false);
+            }
+            return done(null,user);
+        });
+    }));
+    
     passport.use(new FacebookStrategy({
         clientID: configAuth.facebookAuth.clientID,
         clientSecret: configAuth.facebookAuth.clientSecret,
@@ -31,7 +80,17 @@ module.exports = function(passport){
                     if(err)
                         return done(err);
                     if(user){
-                        return done(null,user);
+                        if(!user.facebook.token){
+                            user.facebook.token = token;
+                            user.facebook.name = profile.name.givenName+' '+profile.name.familyName;
+                            user.facebook.email = profile.emails[0].value;
+                            user.save(function(err){
+                                if(err) throw err;
+                                return done(null,user);
+                            });
+                        }else{
+                            return done(null,user);
+                        }
                     }else{
                         var newUser = new User();
                         newUser.facebook.id = profile.id;
@@ -69,38 +128,50 @@ module.exports = function(passport){
         passReqToCallback: true
     },
     function(req, token, refreshToken, profile, done){
-        if(!req.user){
-            User.findOne({'twitter.id': profile.id},function(err,user){
-                if(err)
-                    return done(err);
-                if(user){
+        process.nextTick(function(){
+            if(!req.user){
+                User.findOne({'twitter.id': profile.id},function(err,user){
+                    if(err)
+                        return done(err);
+                    if(user){
+                        if(!user.twitter.token){
+                            user.twitter.token = token;
+                            user.twitter.displayName = profile.displayName;
+                            user.twitter.username = profile.username;
+                            user.save(function(err){
+                                if(err) throw err;
+                                return done(null,user);
+                            });
+                        }else{
+                            return done(null,user);
+                        }
+                    }else{
+                        var newUser = new User();
+                        newUser.twitter.id = profile.id;
+                        newUser.twitter.token = token;
+                        newUser.twitter.displayName = profile.displayName;
+                        newUser.twitter.username = profile.username;
+                        
+                        newUser.save(function(err){
+                            if(err) throw err;
+                            return done(null,newUser);
+                        });
+                    }
+                });
+            }else{
+                var user = req.user;
+                
+                user.twitter.id = profile.id;
+                user.twitter.token = token;
+                user.twitter.displayName = profile.displayName;
+                user.twitter.username = profile.username;
+                
+                user.save(function(err){
+                    if(err) throw err;
                     return done(null,user);
-                }else{
-                    var newUser = new User();
-                    newUser.twitter.id = profile.id;
-                    newUser.twitter.token = token;
-                    newUser.twitter.displayName = profile.displayName;
-                    newUser.twitter.username = profile.username;
-                    
-                    newUser.save(function(err){
-                        if(err) throw err;
-                        return done(null,newUser);
-                    });
-                }
-            });
-        }else{
-            var user = req.user;
-            
-            user.twitter.id = profile.id;
-            user.twitter.token = token;
-            user.twitter.displayName = profile.displayName;
-            user.twitter.username = profile.username;
-            
-            user.save(function(err){
-                if(err) throw err;
-                return done(null,user);
-            });
-        }
+                });
+            }
+        });
     }
     ));
     
@@ -118,7 +189,17 @@ module.exports = function(passport){
                         return done(err);
                     }
                     if(user){
-                        return done(null,user);
+                        if(!user.google.token){
+                            user.google.token = token;
+                            user.google.displayName = profile.displayName;
+                            user.google.email = profile.emails[0].value;
+                            user.save(function(err){
+                                if(err) throw err;
+                                return done(null,user);
+                            });
+                        }else{
+                            return done(null,user);
+                        }
                     }else{
                         var newUser = new User();
                         newUser.google.id = profile.id;
