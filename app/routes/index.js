@@ -1,8 +1,18 @@
 "use strict";
 
 var path = process.cwd();
+var DataHandler = require(process.cwd()+"/app/controllers/dataHandler.server.js");
 
 module.exports = function(app, passport){
+    
+    var dataHandler = new DataHandler();
+    
+    function isLoggedIn(req,res,next){
+        if(req.isAuthenticated()){
+            return next();
+        }
+        res.redirect("/");
+    }
     
     app.route("/").get(function(req,res){
         res.sendFile(path+"/client/index.html");
@@ -17,6 +27,21 @@ module.exports = function(app, passport){
         .get(function(req, res) {
             res.sendFile(path+"/client/error.html");
         });
+   
+    app.route("/api/deck")
+        .post(isLoggedIn, dataHandler.createDeck);
+        
+    app.route("/api/card")
+        .post(isLoggedIn, dataHandler.createCard);
+   
+    //TESTING
+    app.route("/new/deck")
+        .get(isLoggedIn, function(req, res) {
+            res.render('new',{type:'deck'});
+        });
+        
+    app.route("/new/card")
+        .get(isLoggedIn, dataHandler.renderNewCard);
    
     //AUTHENTICATION
     app.route("/auth/local")
@@ -112,10 +137,4 @@ module.exports = function(app, passport){
             });
         });
         
-    function isLoggedIn(req,res,next){
-        if(req.isAuthenticated()){
-            return next();
-        }
-        res.redirect("/");
-    }
 };

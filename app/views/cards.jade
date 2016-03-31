@@ -1,0 +1,11 @@
+html
+    head
+        title Cards
+    body
+        h1= deckName
+        if cards.length===0
+            h3 You have no cards in this deck
+        else
+            ul.cards
+                for val in cards
+                    li= val.sideA + ":" + val.sideB

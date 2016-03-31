@@ -26,7 +26,24 @@ var User = new Schema({
         token: String,
         email: String,
         name: String
-    }
+    },
+    stats: {
+        decksCompleted: Number,
+        totalCorrect: Number,
+        totalWrong: Number,
+        totalStarred: Number
+    },
+    options: {
+        shuffle: Boolean
+    },
+    decksOwned: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Deck'
+    }],
+    decksBorrowed: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Deck'
+    }]
 });
 
 User.methods.generateHash = function(password){
