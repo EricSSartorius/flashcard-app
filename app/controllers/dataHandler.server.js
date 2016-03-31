@@ -19,7 +19,7 @@ function DataHandler(){
             image: "",
             _cards: []
         });
-        Users.findOneAndUpdate({'local.email':req.user.local.email},
+        Users.findOneAndUpdate({'_id':req.user._id},
                                 {$push: {decksOwned: newDeck._id}},{new:true})
             .populate('decksOwned')
             .exec(function(err,user){
@@ -30,7 +30,7 @@ function DataHandler(){
                     if(err) throw err;
                     var decks = user.decksOwned;
                     decks.push(deck);
-                    res.render('decks',{decks: user.decks});
+                    res.render('decks',{decks: decks});
                 });
             });
     };
@@ -61,7 +61,7 @@ function DataHandler(){
     };
     
     this.renderNewCard = function(req,res){
-        Users.findOne({'local.email':req.user.local.email})
+        Users.findOne({'_id':req.user._id})
             .populate('decksOwned')
             .exec(function(err,user){
                 if(err) throw err;
