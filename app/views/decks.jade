@@ -1,0 +1,11 @@
+html
+    head
+        title Decks
+    body
+        h1 My Decks
+        if decks.length===0
+            h3 You have no decks
+        else
+            ul.decks
+                for val in decks
+                    li= val.name

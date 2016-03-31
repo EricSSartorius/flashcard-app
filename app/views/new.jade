@@ -1,0 +1,26 @@
+-var title = "New " + type 
+html
+    head
+        title= title
+    body
+        h1= title
+        if type==="deck"
+            form(action="/api/deck" method="post")
+                label Name
+                input(type="text" name="name")
+                label Description
+                input(type="text" name="desc")
+                button(type="submit") Create
+        if type==="card"
+            if decks.length>0
+                form(action="/api/card" method="post")
+                    select(name="deckId")
+                        for val in decks
+                            option(value=val.id)= val.name
+                    label Side A
+                    input(type="text" name="sideA")
+                    label Side B
+                    input(type="text" name="sideB")
+                    button(type="submit") Create
+            else
+                p No decks created yet.
