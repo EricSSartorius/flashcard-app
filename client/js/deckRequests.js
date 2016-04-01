@@ -3,7 +3,9 @@ $(document).ready(function(){
         if(decks.length>0){
             var deckList = $("<ul></ul>");
             for(var i=0; i<decks.length; i++){
-                deckList.append($("<li>"+decks[i].name+"</li>"));
+                var cardLink = $("<a href='/view/cards/"+decks[i]._id+"'></a>")
+                    .text(decks[i].name);
+                deckList.append($("<li></li>").append(cardLink));
             }
             $(".decks").append(deckList);
         }else{

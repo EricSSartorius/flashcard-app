@@ -67,6 +67,15 @@ function DataHandler(){
             });
     };
     
+    this.getDeck = function(req,res){
+        Decks.findOne({'_id':req.params.deckId})
+            .populate('_cards')
+            .exec(function(err,deck){
+                if(err) throw err;
+                res.json(deck);
+            });
+    };
+    
     this.renderNewCard = function(req,res){
         Users.findOne({'_id':req.user._id})
             .populate('decksOwned')
