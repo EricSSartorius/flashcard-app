@@ -3,9 +3,6 @@ html
         title Decks
     body
         h1 My Decks
-        if decks.length===0
-            h3 You have no decks
-        else
-            ul.decks
-                for val in decks
-                    li= val.name
+        .decks
+        script(src="/client/js/jquery.min.js")
+        script(src="/client/js/deckRequests.js")

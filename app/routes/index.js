@@ -28,7 +28,8 @@ module.exports = function(app, passport){
             res.sendFile(path+"/client/error.html");
         });
    
-    app.route("/api/deck")
+    app.route("/api/decks")
+        .get(isLoggedIn,dataHandler.getDecks)
         .post(isLoggedIn, dataHandler.createDeck);
         
     app.route("/api/card")
@@ -42,6 +43,11 @@ module.exports = function(app, passport){
         
     app.route("/new/card")
         .get(isLoggedIn, dataHandler.renderNewCard);
+        
+    app.route("/view/decks")
+        .get(isLoggedIn, function(req, res) {
+            res.render('decks',{});
+        });
    
     //AUTHENTICATION
     app.route("/auth/local")

@@ -28,10 +28,17 @@ function DataHandler(){
                 newDeck._borrowers = [user._id];
                 newDeck.save(function(err,deck){
                     if(err) throw err;
-                    var decks = user.decksOwned;
-                    decks.push(deck);
-                    res.render('decks',{decks: decks});
+                    res.redirect("/view/decks");
                 });
+            });
+    };
+    
+    this.getDecks = function(req,res){
+        Users.findOne({'_id':req.user._id})
+            .populate('decksOwned')
+            .exec(function(err,user){
+                if(err) throw err;
+                res.json(user.decksOwned);
             });
     };
     
