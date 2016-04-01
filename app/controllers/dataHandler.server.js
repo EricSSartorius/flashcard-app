@@ -19,7 +19,7 @@ function DataHandler(){
             image: "",
             _cards: []
         });
-        Users.findOneAndUpdate({'local.email':req.user.local.email},
+        Users.findOneAndUpdate({'_id':req.user._id},
                                 {$push: {decksOwned: newDeck._id}},{new:true})
             .populate('decksOwned')
             .exec(function(err,user){
@@ -28,10 +28,17 @@ function DataHandler(){
                 newDeck._borrowers = [user._id];
                 newDeck.save(function(err,deck){
                     if(err) throw err;
-                    var decks = user.decksOwned;
-                    decks.push(deck);
-                    res.render('decks',{decks: user.decks});
+                    res.redirect("/view/decks");
                 });
+            });
+    };
+    
+    this.getDecks = function(req,res){
+        Users.findOne({'_id':req.user._id})
+            .populate('decksOwned')
+            .exec(function(err,user){
+                if(err) throw err;
+                res.json(user.decksOwned);
             });
     };
     
@@ -60,8 +67,17 @@ function DataHandler(){
             });
     };
     
+    this.getDeck = function(req,res){
+        Decks.findOne({'_id':req.params.deckId})
+            .populate('_cards')
+            .exec(function(err,deck){
+                if(err) throw err;
+                res.json(deck);
+            });
+    };
+    
     this.renderNewCard = function(req,res){
-        Users.findOne({'local.email':req.user.local.email})
+        Users.findOne({'_id':req.user._id})
             .populate('decksOwned')
             .exec(function(err,user){
                 if(err) throw err;
