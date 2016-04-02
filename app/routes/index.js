@@ -36,7 +36,11 @@ module.exports = function(app, passport){
         .post(isLoggedIn, dataHandler.createCard);
         
     app.route("/api/deck/:deckId")
-        .get(dataHandler.getDeck);
+        .get(dataHandler.getDeck)
+        .delete(isLoggedIn, dataHandler.deleteDeck);
+        
+    app.route("/api/card/:cardId")
+        .delete(dataHandler.deleteCard);
    
     //TESTING
     app.route("/new/deck")
