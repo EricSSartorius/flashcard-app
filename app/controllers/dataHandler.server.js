@@ -42,6 +42,26 @@ function DataHandler(){
             });
     };
     
+    this.deleteDeck = function(req,res){
+        var deckId = req.params.deckId;
+        Decks.findOne({_id: deckId})
+            .remove()
+            .exec(function(err){
+                if(err){
+                    res.json({error: "Deck delete error: "+err});
+                }else{
+                    Users.findOneAndUpdate({_id:req.user._id},{$pull:{decksOwned:deckId}})
+                        .exec(function(err,user){
+                            if(err){
+                                res.json({error: "User update error: "+err});
+                            }else{
+                                res.json({result: 'success'});
+                            }
+                        });
+                }
+            });
+    };
+    
     this.createCard = function(req,res){
         var newId = mongoose.Types.ObjectId();
         var newCard = new Cards({
@@ -73,6 +93,30 @@ function DataHandler(){
             .exec(function(err,deck){
                 if(err) throw err;
                 res.json(deck);
+            });
+    };
+    
+    this.deleteCard = function(req,res){
+        var cardId = req.params.cardId;
+        Cards.findOne({_id:cardId})
+            .exec(function(err,card){
+                if(err) throw err;
+                Decks.findOneAndUpdate({_id:card._deck},{$pull:{_cards:cardId}})
+                .exec(function(err, deck){
+                    if(err){
+                        res.json({error: "Delete card error: "+err});
+                    }else{
+                        Cards.findOne({_id:cardId})
+                            .remove()
+                            .exec(function(err){
+                                if(err){
+                                    res.json({error:"Card delete error: "+err});
+                                }else{
+                                    res.json({status:"Success"});
+                                }
+                            });
+                    }
+                });
             });
     };
     
