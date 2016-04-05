@@ -107,15 +107,22 @@ module.exports = function(passport){
             }else{
                 var user = req.user;
                 
-                user.facebook.id = profile.id;
-                user.facebook.token = token;
-                user.facebook.name = profile.name.givenName+' '+profile.name.familyName;
-                user.facebook.email = profile.emails[0].value;
-                
-                user.save(function(err){
-                    if(err) throw err;
-                    return done(null,user);
-                });
+                User.findOne({'facebook.id':profile.id})
+                    .exec(function(err,fUser){
+                        if(err) return done(err);
+                        if(fUser){
+                            return done(null, fUser);
+                        }
+                        user.facebook.id = profile.id;
+                        user.facebook.token = token;
+                        user.facebook.name = profile.name.givenName+' '+profile.name.familyName;
+                        user.facebook.email = profile.emails[0].value;
+                        
+                        user.save(function(err){
+                            if(err) throw err;
+                            return done(null,user);
+                        });
+                    });
             }
         });
     }
@@ -161,15 +168,22 @@ module.exports = function(passport){
             }else{
                 var user = req.user;
                 
-                user.twitter.id = profile.id;
-                user.twitter.token = token;
-                user.twitter.displayName = profile.displayName;
-                user.twitter.username = profile.username;
-                
-                user.save(function(err){
-                    if(err) throw err;
-                    return done(null,user);
-                });
+                User.findOne({'twitter.id':profile.id})
+                    .exec(function(err,tUser){
+                        if(err) return done(err);
+                        if(tUser){
+                            return done(null,tUser);
+                        }
+                        user.twitter.id = profile.id;
+                        user.twitter.token = token;
+                        user.twitter.displayName = profile.displayName;
+                        user.twitter.username = profile.username;
+                        
+                        user.save(function(err){
+                            if(err) throw err;
+                            return done(null,user);
+                        });
+                    });
             }
         });
     }
@@ -216,15 +230,22 @@ module.exports = function(passport){
             }else{
                 var user = req.user;
                 
-                user.google.id = profile.id;
-                user.google.token = token;
-                user.google.displayName = profile.displayName;
-                user.google.email = profile.emails[0].value;
-                
-                user.save(function(err){
-                    if(err) throw err;
-                    return done(null,user);
-                });
+                User.findOne({'google.id':profile.id})
+                    .exec(function(err,gUser){
+                        if(err) return done(err);
+                        if(gUser){
+                            return done(null, gUser);
+                        }
+                        user.google.id = profile.id;
+                        user.google.token = token;
+                        user.displayName = profile.displayName;
+                        user.google.email = profile.emails[0].value;
+                        
+                        user.save(function(err){
+                            if(err) throw err;
+                            return done(null,user);
+                        });
+                    });
             }
         });
     }
