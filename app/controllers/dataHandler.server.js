@@ -28,7 +28,7 @@ function DataHandler(){
                 newDeck._borrowers = [user._id];
                 newDeck.save(function(err,deck){
                     if(err) throw err;
-                    res.redirect("/view/decks");
+                    res.json({success:deck});
                 });
             });
     };
@@ -82,7 +82,7 @@ function DataHandler(){
                     if(err) throw err;
                     var cards = deck._cards;
                     cards.push(card);
-                    res.render('cards',{deckName: deck.name, cards:cards});
+                    res.json({success: card});
                 });
             });
     };
@@ -120,7 +120,7 @@ function DataHandler(){
             });
     };
     
-    this.renderNewCard = function(req,res){
+    this.renderNewCard = function(req,res){     //Function is only for testing
         Users.findOne({'_id':req.user._id})
             .populate('decksOwned')
             .exec(function(err,user){
